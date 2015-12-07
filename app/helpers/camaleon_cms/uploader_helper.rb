@@ -138,14 +138,11 @@ module CamaleonCms::UploaderHelper
     aws_s3_bucket = ENV['AWS_S3_BUCKET']
     aws_s3_region = ENV['AWS_S3_REGION']
     
-    puts "***** helpers/camaleon_cms/upload_helper.rb  #{aws_s3_region} line 141 *******"
-    
     server = current_site.get_option("filesystem_type", "local")
     server = 's3' unless ENV['AWS_ACCESS_KEY_ID'].nil?
     
     #server = current_site.get_option("filesystem_type", "local")
     @fog_connection_hook_res ||= {server: server, connection: nil, thumb_folder_name: "thumb", bucket_name: server == "local" ? "media" : aws_s3_bucket, thumb: {w: 100, h: 100}}; hooks_run("on_uploader", @fog_connection_hook_res)
-    puts @fog_connection_hook_res.inspect
     case server
       when "local"
         Dir.mkdir(Rails.root.join("public", "media").to_s) unless Dir.exist?(Rails.root.join("public", "media").to_s)
@@ -154,11 +151,9 @@ module CamaleonCms::UploaderHelper
         #@fog_connection ||= !@fog_connection_hook_res[:connection].present? ? Fog::Storage.new({ :aws_access_key_id => current_site.get_option("filesystem_s3_access_key"), :provider   => 'AWS', aws_secret_access_key: current_site.get_option("filesystem_s3_secret_key"), :region  => current_site.get_option("filesystem_region") }) : @fog_connection_hook_res[:connection]
         
         @fog_connection ||= !@fog_connection_hook_res[:connection].present? ? Fog::Storage.new({ :aws_access_key_id => aws_access_key_id, :provider   => 'AWS', aws_secret_access_key: aws_secret_access_key, :region  => aws_s3_region }) : @fog_connection_hook_res[:connection]
-        puts @fog_connection.inspect
         
     end
     @fog_connection_bucket_dir ||= @fog_connection.directories.get(@fog_connection_hook_res[:bucket_name])
-    puts @fog_connection_bucket_dir.inspect
     
     current_site.set_meta("cache_browser_files_#{@fog_connection_hook_res}", nil) if clear_cache
   end
