@@ -28,8 +28,8 @@ gem "twitter-bootstrap-rails"
 gem 'haml'
 
 # Cameleon
-gem "camaleon_cms"
-
+gem "camaleon_cms", github: 'owen2345/camaleon-cms'
+#gem "camaleon_cms"
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
